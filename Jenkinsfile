@@ -5,12 +5,7 @@ pipeline{
         jdk "JDK-11"
     }       
     stages {
-//         stage('Checkout') {
-//             steps {
-//                 // Get some code from a GitHub repository
-//                 git 'https://github.com/Mangesh-Suryawanshi/competencyTracker.git'
-//             }
-//         }
+
         stage('Initialize'){
             steps{
                 echo "PATH = ${M2_HOME}/bin:${PATH}"
@@ -31,11 +26,12 @@ pipeline{
                     bat 'mvn sonar:sonar'
                 }
             }
-            stage("Quality gate") {
+        }
+        stage("Quality gate") {
             steps {
                 waitForQualityGate abortPipeline: true
             }
-    }   
+           }   
         stage('Upload Artifact') {
               steps {
                   script{
@@ -54,6 +50,6 @@ pipeline{
                               }
                           
         }
-    }
+    
 }
 
