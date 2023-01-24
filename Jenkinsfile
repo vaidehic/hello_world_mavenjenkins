@@ -31,6 +31,28 @@ pipeline{
                     bat 'mvn sonar:sonar'
                 }
             }
+            stage("Quality gate") {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+    }   
+        stage('Upload Artifact') {
+              steps {
+                  script{
+                      def server = Artifactory.server 'JfrogServer'
+                      def uploadSpec = """{ 
+                          "files":[
+                              {
+                                  "pattern":"target./*.jar",
+                                  "target": "Simple_java_project_Repo/"
+                              }
+                              }
+                              }"""
+                              server.upload(uploadSpec)
+                              }
+                              }
+                              }
+                          
         }
     }
 }
