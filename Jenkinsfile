@@ -38,7 +38,7 @@ pipeline{
                                   "pattern":"target./*.jar",
                                   "target": "Simple_java_project_Repo/"
                               }
-                              }
+                              ]
                               }"""
                               server.upload(uploadSpec)
                               }
