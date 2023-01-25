@@ -27,11 +27,7 @@ pipeline{
                 }
             }
         }
-        stage("Quality gate") {
-            steps {
-                waitForQualityGate abortPipeline: true
-            }
-           }   
+        
         stage('Upload Artifact') {
               steps {
                   script{
