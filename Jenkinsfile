@@ -1,18 +1,5 @@
 pipeline {
 
-    agent {
-        
-            label 'master'
-        
-    }
-
-    options {
-        buildDiscarder logRotator( 
-                    daysToKeepStr: '16', 
-                    numToKeepStr: '10'
-            )
-    }
-
     stages {
         
         stage('Cleanup Workspace') {
