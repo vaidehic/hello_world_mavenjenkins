@@ -1,51 +1,70 @@
-pipeline{
-    agent any
-    tools{
-        maven "Maven 3.6.3"
-        jdk "JDK-11"
-    }       
+pipeline {
+
+    agent {
+        node {
+            label 'master'
+        }
+    }
+
+    options {
+        buildDiscarder logRotator( 
+                    daysToKeepStr: '16', 
+                    numToKeepStr: '10'
+            )
+    }
+
     stages {
-
-        stage('Initialize'){
-            steps{
-                echo "PATH = ${M2_HOME}/bin:${PATH}"
-                echo "M2_HOME = /opt/maven"
-            }
-        }
-
-        stage('Compile'){
-            steps{
-                echo "COMPILE"
-             bat 'mvn clean install'
-            }
-        }
-        stage('Sonar Analysis') {
-            steps {
-                // use the SonarQube Scanner to analyze the project
-                withSonarQubeEnv('SonarQubeServer') {
-                    bat 'mvn sonar:sonar'
-                }
-            }
-        }
         
-        stage('Upload Artifact') {
-              steps {
-                  script{
-                      def server = Artifactory.server 'JfrogServer'
-                      def uploadSpec = """{ 
-                          "files":[
-                              {
-                                  "pattern":"target./*.jar",
-                                  "target": "Simple_java_project_Repo/"
-                              }
-                              ]
-                              }"""
-                              server.upload(uploadSpec)
-                              }
-                              }
-                              }
-                          
+        stage('Cleanup Workspace') {
+            steps {
+                cleanWs()
+                sh """
+                echo "Cleaned Up Workspace For Project"
+                """
+            }
         }
-    
+
+        stage('Code Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
+                    userRemoteConfigs: [[url: 'https://github.com/vaidehic/hello_world_mavenjenkins.git']]
+                ])
+            }
+        }
+
+        stage(' Unit Testing') {
+            steps {
+                sh """
+                echo "Running Unit Tests"
+                """
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                sh """
+                echo "Running Code Analysis"
+                """
+            }
+        }
+
+        stage('Build Deploy Code') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                sh """
+                echo "Building Artifact"
+                """
+
+                sh """
+                echo "Deploying Code"
+                """
+            }
+        }
+
+    }   
 }
 
