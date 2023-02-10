@@ -1,6 +1,6 @@
 pipeline {
 
-    agent any{
+    agent any
         stages {
          stage('Build') {
              steps {
@@ -11,7 +11,7 @@ pipeline {
                      jiraSendBuildInfo site: 'https://firstjirasite.atlassian.net' , branch: 'FIR-4'
                  }
              }
-         }
+         
 
         }
 
